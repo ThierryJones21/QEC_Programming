@@ -1,5 +1,6 @@
 import webbrowser
 import tkinter as tk
+from tkinter import *
 from tkcalendar import *
 from PIL import Image, ImageTk
 
@@ -84,20 +85,23 @@ class Investments(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         r = self
+        # take the data
+        lst = [('Groceries', 'Price:', 'Rent&Utilities', 'Price:'),
+               ('Apples', 10.00, 'Aug', 600.30),
+               ('Chicken', 15.50, 'Sep', 611.00),
+               ('Broccoli', 13.20, 'Oct', 609.30),
+               ('Milk', 6.00, 'Nov', 605.40)]
+        total_rows = len(lst)
+        total_columns = len(lst[0])
         r.configure(bg='purple')
-        cd = Calendar(r, selectmode="day", year=2020, month=5)
-        cd.pack(pady=20)
+        # code for creating table
+        for i in range(total_rows):
+            for j in range(total_columns):
+                e = Entry(r, width=7, fg='blue',
+                               font=('Arial', 16, 'bold'))
 
-        def onclick():
-            label.config(text=cd.get_date())
-
-        button = tk.Button(r, text="Get Date", command=onclick)
-        button.pack(pady=20)
-        button1 = tk.Button(r, text='Go Back', width=30,
-                            command=lambda: controller.show_frame(MainPage))
-        button1.pack(pady=20)
-        label = tk.Label(r, text="")
-        label.pack(pady=20)
+                e.grid(row=i, column=j)
+                e.insert(END, lst[i][j])
 
 
 app = Interface()
