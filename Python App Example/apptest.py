@@ -1,11 +1,10 @@
 import webbrowser
 import tkinter as tk
-from tkinter import *
-from PIL import Image
+from tkcalendar import *
+from PIL import Image, ImageTk
 
 
 class Interface(tk.Tk):
-
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         container = tk.Frame(self)
@@ -15,9 +14,9 @@ class Interface(tk.Tk):
 
         self.frames = {}
 
-        for F in (MainPage, GuideMenu, EquipmentMenu, BBBCMenu, CLMenu, CAMenu, ShipSearchMenu):
+        for F in (MainPage, CalendarPage, Investments):
             frame = F(container, self)
-            self.frames[F] = frame;
+            self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame(MainPage)
@@ -33,140 +32,72 @@ class MainPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         r = self
         r.configure(bg='blue')
-        text = tk.Label(r, text="Customizable Budgeting App", width=50, height=5, bg='blue',
+        text = tk.Label(r, text="Customizable Budgeting App", width=50, height=5, bg='purple',
                         fg='white').grid()
-        button = tk.Button(r, text='Player Guide', width=30,
-                           command=lambda: controller.show_frame(GuideMenu)).grid(pady=5)
-        button1 = tk.Button(r, text='Equipment Guide', width=30,
-                            command=lambda: controller.show_frame(EquipmentMenu)).grid(pady=5)
-        button2 = tk.Button(r, text='Ship Search', width=30,
-                            command=lambda: controller.show_frame(ShipSearchMenu)).grid(pady=5)
-        button3 = tk.Button(r, text='Tier List', width=30,
-                            command=lambda: webbrowser.open_new_tab('https://tinyurl.com/tsg2gnc')).grid(pady=5)
-        gap = tk.Label(r, text="", height=2, bg='black').grid()
-
-
-class GuideMenu(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        r = self
-        r.configure(bg='blue')
-        text = tk.Label(r, text="", width=50, height=5, bg='black', fg='white').grid()
-        button = tk.Button(r, text='General FAQ', width=30,
-                           command=lambda: webbrowser.open_new_tab('https://azurlane.koumakan.jp/FAQ')).grid(pady=5)
-        button1 = tk.Button(r, text='General Guide', width=30,
+        button = tk.Button(r, text='Budgeting Calendar', width=30,
+                           command=lambda: controller.show_frame(CalendarPage)).grid(pady=5)
+        button1 = tk.Button(r, text='Investments', width=30,
+                            command=lambda: controller.show_frame(Investments)).grid(pady=5)
+        button2 = tk.Button(r, text='Queens Budgeting Resources', width=30,
                             command=lambda: webbrowser.open_new_tab(
-                                'https://azurlane.koumakan.jp/User:Shipposting_Duck')).grid(pady=5)
-        button2 = tk.Button(r, text='Beginner\'s Guide', width=30,
-                            command=lambda: webbrowser.open_new_tab(
-                                'https://azurlane.koumakan.jp/User:Itsfyh/EN_Beginner\'s_Guide')).grid(pady=5)
-        button3 = tk.Button(r, text='New Player Ship Guide', width=30,
-                            command=lambda: Image.open('Images/newShipGuide.png').show()).grid(pady=5)
-        button4 = tk.Button(r, text='Go Back', width=30,
-                            command=lambda: controller.show_frame(MainPage)).grid(pady=5)
-        gap = tk.Label(r, text="", height=2, bg='black').grid()
+                                'https://www.queensu.ca/urs/resources/budget-resources')).grid(pady=5)
+
+        load = Image.open("QEC-Purple.png")
+        [imageSizeWidth, imageSizeHeight] = load.size
+
+        newImageSizeWidth = int(imageSizeWidth / 2)
+        newImageSizeHeight = int(imageSizeHeight / 2)
+
+        load = load.resize((newImageSizeWidth, newImageSizeHeight), Image.ANTIALIAS)
+        render = ImageTk.PhotoImage(load)
+        img = tk.Label(r, image=render)
+
+        img.image = render
+        img.place(x=18, y=265)
+
+        gap = tk.Label(r, text="", height=2, bg='blue').grid()
 
 
-class EquipmentMenu(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        r = self
-        r.configure(bg='blue')
-        text = tk.Label(r, text="Guides Provided by Nerezza", width=50, height=5, bg='black', fg='white').grid()
-        button = tk.Button(r, text='Battle Ships Guide (BB/BC)', width=30,
-                           command=lambda: controller.show_frame(BBBCMenu)).grid(pady=5)
-        button1 = tk.Button(r, text='Carrier Ships Guide (CL/CV/BBV)', width=30,
-                            command=lambda: Image.open('Images/Planes.jpg').show()).grid(pady=5)
-        button2 = tk.Button(r, text='Light Cruisers Guide (CL)', width=30,
-                            command=lambda: controller.show_frame(CLMenu)).grid(pady=5)
-        button3 = tk.Button(r, text='Heavy Cruisers Guide (CA)', width=30,
-                            command=lambda: controller.show_frame(CAMenu)).grid(pady=5)
-        button4 = tk.Button(r, text='Destroyer Ships Guide (DD)', width=30,
-                            command=lambda: Image.open('Images/GeneralDD.jpg').show()).grid(pady=5)
-        button5 = tk.Button(r, text='Go Back', width=30,
-                            command=lambda: controller.show_frame(MainPage)).grid(pady=5)
-        gap = tk.Label(r, text="", height=2, bg='black').grid()
-
-
-class ShipSearchMenu(tk.Frame):
+class CalendarPage(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         r = self
-        r.configure(bg='black')
-        text = tk.Label(r, text="Enter Ship Name:", width=50, height=5, bg='black', fg='white').grid()
+        r.configure(bg='purple')
+        cd = Calendar(r, selectmode="day", year=2020, month=5)
+        cd.pack(pady=20)
 
-        mystring = tk.StringVar(r)
-        entry = tk.Entry(r, textvariable=mystring).grid(pady=5)
+        def onclick():
+            label.config(text=cd.get_date())
 
-        button = tk.Button(r, text='Search on Wiki', width=20,
-                           command=lambda: webbrowser.open_new_tab(
-                               'https://azurlane.koumakan.jp/' + mystring.get().capitalize())).grid(pady=10)
-
-        button1 = tk.Button(r, text='Go Back', width=15,
-                            command=lambda: controller.show_frame(MainPage).grid(pady=5))
-
-        gap = tk.Label(r, text="", height=2, bg='black').grid()
-
-
-class BBBCMenu(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        r = self
-        r.configure(bg='black')
-        text = tk.Label(r, text="Guides Provided by Nerezza", width=50, height=5, bg='black', fg='white').grid()
-        button = tk.Button(r, text='Barrage Focused w/ DD guns', width=30,
-                           command=lambda: Image.open('Images/BarrageBBwDD.png').show()).grid(pady=5)
-        button1 = tk.Button(r, text='Barrage Focused w/ CL guns', width=30,
-                            command=lambda: Image.open('Images/BarrageBBwCL.png').show()).grid(pady=5)
-        button2 = tk.Button(r, text='Shelling Focused w/ DD guns', width=30,
-                            command=lambda: Image.open('Images/ShellingBBwDD.png').show()).grid(pady=5)
-        button3 = tk.Button(r, text='Shelling Focused w/ CL guns', width=30,
-                            command=lambda: Image.open('Images/ShellingBBwCL.png').show()).grid(pady=5)
-        button4 = tk.Button(r, text='Mixed w/ DD guns', width=30,
-                            command=lambda: Image.open('Images/GenericBBwDD.png').show()).grid(pady=5)
-        button5 = tk.Button(r, text='Mixed w/ CL guns', width=30,
-                            command=lambda: Image.open('Images/GenericBBwCL.png').show()).grid(pady=5)
-        button6 = tk.Button(r, text='Go Back', width=30,
-                            command=lambda: controller.show_frame(EquipmentMenu)).grid(pady=5)
-        gap = tk.Label(r, text="", height=2, bg='black').grid()
+        button = tk.Button(r, text="Get Date", command=onclick)
+        button.pack(pady=20)
+        button1 = tk.Button(r, text='Go Back', width=30,
+                            command=lambda: controller.show_frame(MainPage))
+        button1.pack(pady=20)
+        label = tk.Label(r, text="")
+        label.pack(pady=20)
 
 
-class CLMenu(tk.Frame):
+class Investments(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         r = self
-        r.configure(bg='black')
-        text = tk.Label(r, text="Guides Provided by Nerezza", width=50, height=5, bg='black', fg='white').grid()
-        button = tk.Button(r, text='Gun Based CL', width=30,
-                           command=lambda: Image.open('Images/GunBasedCL.jpg').show()).grid(pady=5)
-        button1 = tk.Button(r, text='Torpedo Based CL', width=30,
-                            command=lambda: Image.open('Images/TorpBasedCLwCL.jpg').show()).grid(pady=5)
-        button2 = tk.Button(r, text='Torpedo Based CL w/ DD guns', width=30,
-                            command=lambda: Image.open('Images/TorpBasedCLwDD.jpg').show()).grid(pady=5)
-        button3 = tk.Button(r, text='Go Back', width=30,
-                            command=lambda: controller.show_frame(EquipmentMenu)).grid(pady=5)
-        gap = tk.Label(r, text="", height=2, bg='black').grid()
+        r.configure(bg='purple')
+        cd = Calendar(r, selectmode="day", year=2020, month=5)
+        cd.pack(pady=20)
 
+        def onclick():
+            label.config(text=cd.get_date())
 
-class CAMenu(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        r = self
-        r.configure(bg='black')
-        text = tk.Label(r, text="Guides Provided by Nerezza", width=50, height=5, bg='black', fg='white').grid()
-        button = tk.Button(r, text='Gun Based CA', width=30,
-                           command=lambda: Image.open('Images/GunBasedCA.jpg').show()).grid(pady=5)
-        button1 = tk.Button(r, text='Torpedo Based CA', width=30,
-                            command=lambda: Image.open('Images/TorpBasedCA.jpg').show()).grid(pady=5)
-        button2 = tk.Button(r, text='Go Back', width=30,
-                            command=lambda: controller.show_frame(EquipmentMenu)).grid(pady=5)
-        gap = tk.Label(r, text="", height=2, bg='black').grid()
+        button = tk.Button(r, text="Get Date", command=onclick)
+        button.pack(pady=20)
+        button1 = tk.Button(r, text='Go Back', width=30,
+                            command=lambda: controller.show_frame(MainPage))
+        button1.pack(pady=20)
+        label = tk.Label(r, text="")
+        label.pack(pady=20)
 
 
 app = Interface()
@@ -174,6 +105,6 @@ app.title('Student Budgeting App')
 windowWidth = app.winfo_reqwidth()
 windowHeight = app.winfo_reqheight()
 positionRight = int(app.winfo_screenwidth() / 2 - windowWidth / 2 - 50)
-positionDown = int(app.winfo_screenheight() / 2 - windowHeight / 2 - 80)
+positionDown = int(app.winfo_screenheight() / 2 - windowHeight / 2 - 100)
 app.geometry("+{}+{}".format(positionRight, positionDown))
 app.mainloop()
